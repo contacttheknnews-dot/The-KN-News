@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="250" viewBox="0 0 300 250">
+  <defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="hsl(340 65% 32%)"/><stop offset="1" stop-color="hsl(340 70% 48%)"/>
+  </linearGradient></defs>
+  <rect width="300" height="250" rx="8" fill="url(#b)"/>
+  <text x="150" y="117" text-anchor="middle" font-family="Arial" font-weight="700" font-size="30" fill="#fff">Sharma Sarees, Varanasi</text>
+  <text x="150" y="147" text-anchor="middle" font-family="Arial" font-size="16" fill="#fff" opacity="0.8">Sample Advertiser Banner</text>
+</svg>

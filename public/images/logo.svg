@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#1a1a1a"/>
+  <rect x="96" y="176" width="320" height="160" rx="24" fill="#d21f2a"/>
+  <text x="256" y="292" text-anchor="middle" font-family="Arial" font-weight="800" font-size="120" fill="#ffffff">KN</text>
+  <text x="256" y="400" text-anchor="middle" font-family="Arial" font-weight="600" font-size="44" fill="#ffffff">NEWS</text>
+</svg>
