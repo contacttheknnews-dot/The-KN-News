@@ -24,6 +24,13 @@ const nextConfig: NextConfig = {
   // sharp is a native module — it must be required from node_modules at
   // runtime, never bundled (Turbopack bundling breaks its binding on Vercel).
   serverExternalPackages: ["sharp"],
+  // sharp loads its platform binding (@img/sharp-linux-x64) via a dynamic
+  // require that file tracing can't follow, so Vercel's function bundle
+  // shipped without it and uploads fell back to storing originals. Force the
+  // platform packages into the upload route's bundle.
+  outputFileTracingIncludes: {
+    "/api/admin/upload": ["./node_modules/@img/**", "./node_modules/sharp/**"],
+  },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },

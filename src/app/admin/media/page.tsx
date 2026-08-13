@@ -2,6 +2,7 @@ import { readdir } from "fs/promises";
 import path from "path";
 import { list } from "@vercel/blob";
 import { requireUser } from "@/lib/auth";
+import { blobConfigured } from "@/lib/blob";
 import Uploader from "./Uploader";
 import MediaBrowser, { type MediaFile } from "./MediaBrowser";
 
@@ -13,7 +14,7 @@ export default async function MediaPage() {
   const files: MediaFile[] = [];
 
   // Production (Vercel): admin uploads live in Blob storage.
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  if (blobConfigured()) {
     try {
       const res = await list({ prefix: "uploads/", limit: 500 });
       for (const b of res.blobs.sort((a, z) => (a.pathname < z.pathname ? 1 : -1))) {

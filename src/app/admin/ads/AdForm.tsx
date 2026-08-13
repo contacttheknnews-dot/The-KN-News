@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { AD_PLACEMENTS } from "@/lib/constants";
 import { saveAd, type AdminActionResult } from "../actions";
 import { inputCls, labelCls, btnPrimary } from "../ui";
+import ImageUploadField from "../ImageUploadField";
 
 type Item = {
   id: number;
@@ -32,12 +33,23 @@ export default function AdForm({ item }: { item: Item | null }) {
         <input name="advertiserName" required defaultValue={item?.advertiserName} className={inputCls} />
       </div>
       <div>
-        <label className={labelCls}>Desktop Banner URL * (JPG/PNG/WebP/SVG — Media Library से अपलोड करें)</label>
-        <input name="imageDesktop" required defaultValue={item?.imageDesktop} className={inputCls} placeholder="/uploads/banner.png" />
+        <label className={labelCls}>Desktop Banner * (अपलोड करें या URL डालें — JPG/PNG/WebP/GIF)</label>
+        <ImageUploadField
+          key={`d-${item?.id ?? "new"}`}
+          name="imageDesktop"
+          required
+          defaultValue={item?.imageDesktop ?? ""}
+          placeholder="/uploads/banner.png या https://…"
+        />
       </div>
       <div>
-        <label className={labelCls}>Mobile Banner URL (वैकल्पिक)</label>
-        <input name="imageMobile" defaultValue={item?.imageMobile} className={inputCls} />
+        <label className={labelCls}>Mobile Banner (वैकल्पिक)</label>
+        <ImageUploadField
+          key={`m-${item?.id ?? "new"}`}
+          name="imageMobile"
+          defaultValue={item?.imageMobile ?? ""}
+          placeholder="/uploads/banner-mobile.png या https://…"
+        />
       </div>
       <div>
         <label className={labelCls}>Click URL *</label>

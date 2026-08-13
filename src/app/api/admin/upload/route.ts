@@ -4,6 +4,7 @@ import path from "path";
 import crypto from "crypto";
 import { put } from "@vercel/blob";
 import { getSession } from "@/lib/auth";
+import { blobConfigured } from "@/lib/blob";
 import { rateLimit } from "@/lib/rate-limit";
 
 // sharp is loaded lazily: if the native module is unavailable in this
@@ -26,7 +27,8 @@ export const dynamic = "force-dynamic";
 
 const ALLOWED = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"]);
 const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-const UPLOAD_ROLES = new Set(["SUPER_ADMIN", "EDITOR", "REPORTER", "AUTHOR"]);
+// AD_MANAGER included so advertisement banners can be uploaded from the ads module.
+const UPLOAD_ROLES = new Set(["SUPER_ADMIN", "EDITOR", "REPORTER", "AUTHOR", "AD_MANAGER"]);
 const MAX_SIZE = 12 * 1024 * 1024; // 12 MB input — output is compressed anyway
 const MAX_WIDTH = 1600;
 
@@ -78,7 +80,9 @@ async function storeOne(file: File): Promise<Uploaded> {
   }
 
   // Production (Vercel): the filesystem is read-only, so store in Vercel Blob.
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  // blobConfigured() also covers OIDC store connections where the token env
+  // var is absent — the SDK resolves credentials itself.
+  if (blobConfigured()) {
     try {
       const blob = await put(`uploads/${processed.name}`, processed.buffer, {
         access: "public",
@@ -93,6 +97,17 @@ async function storeOne(file: File): Promise<Uploaded> {
         message: `अपलोड विफल रही — Blob storage से संपर्क नहीं हो सका। (${detail.slice(0, 200)})`,
       };
     }
+  }
+
+  // On Vercel without Blob configured there is nowhere to store the file —
+  // say so explicitly instead of failing on the read-only filesystem.
+  if (process.env.VERCEL) {
+    console.error("[upload] no Blob configuration on Vercel (BLOB_READ_WRITE_TOKEN empty/missing)");
+    return {
+      ok: false,
+      message:
+        "अपलोड विफल — Blob storage कॉन्फ़िगर नहीं है। Vercel में BLOB_READ_WRITE_TOKEN सेट करें या Storage → Blob store को project से connect करें।",
+    };
   }
 
   // Local development: write to public/uploads on disk.
