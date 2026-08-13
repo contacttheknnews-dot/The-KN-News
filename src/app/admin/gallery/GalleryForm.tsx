@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { saveGallery, type AdminActionResult } from "../actions";
 import { inputCls, labelCls, btnPrimary } from "../ui";
+import GalleryImagesField from "./GalleryImagesField";
 
 type Item = {
   id: number;
@@ -45,19 +46,7 @@ export default function GalleryForm({
           ))}
         </select>
       </div>
-      <div>
-        <label className={labelCls}>
-          Images * (एक प्रति लाइन: <code>URL | caption</code>)
-        </label>
-        <textarea
-          name="images"
-          required
-          rows={8}
-          defaultValue={item?.images}
-          className={`${inputCls} resize-y font-mono text-xs`}
-          placeholder={"/uploads/photo1.jpg | पहली फोटो का कैप्शन\n/uploads/photo2.jpg | दूसरी फोटो"}
-        />
-      </div>
+      <GalleryImagesField key={item?.id ?? "new"} defaultValue={item?.images ?? ""} />
       <button type="submit" disabled={pending} className={`${btnPrimary} w-full`}>
         {pending ? "…" : "Save"}
       </button>

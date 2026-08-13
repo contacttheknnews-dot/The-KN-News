@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { istDateInputValue, istTimeInputValue } from "@/lib/utils";
 import ArticleForm from "../ArticleForm";
 
 export const dynamic = "force-dynamic";
@@ -32,8 +33,8 @@ export default async function NewArticlePage() {
           authorId: "",
           location: "",
           status: "DRAFT",
-          publishDate: now.toISOString().slice(0, 10),
-          publishTime: now.toTimeString().slice(0, 5),
+          publishDate: istDateInputValue(now),
+          publishTime: istTimeInputValue(now),
           featured: false,
           isOpinion: false,
           tags: "",

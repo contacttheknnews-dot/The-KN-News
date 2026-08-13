@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { AD_PLACEMENTS } from "@/lib/constants";
-import { formatHindiDate } from "@/lib/utils";
+import { formatHindiDate, istDateInputValue } from "@/lib/utils";
 import { deleteAd } from "../actions";
 import { DeleteButton } from "../ui";
 import AdForm from "./AdForm";
@@ -82,8 +82,8 @@ export default async function AdsPage({
                   imageMobile: editing.imageMobile ?? "",
                   url: editing.url,
                   placement: editing.placement,
-                  startDate: editing.startDate?.toISOString().slice(0, 10) ?? "",
-                  endDate: editing.endDate?.toISOString().slice(0, 10) ?? "",
+                  startDate: istDateInputValue(editing.startDate),
+                  endDate: istDateInputValue(editing.endDate),
                   active: editing.active,
                 }
               : null

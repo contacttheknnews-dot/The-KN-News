@@ -63,6 +63,42 @@ export function formatHindiDateTime(date: Date | string | null | undefined): str
   return `${formatHindiDate(date)}, ${formatHindiTime(date)}`;
 }
 
+// ---- IST form-input helpers ------------------------------------------------
+// <input type="date"/"time"/"datetime-local"> values must be written and read
+// as IST wall-clock time, not the runtime's zone (Vercel runs in UTC), or
+// every prefill and every save shifts by 5.5 hours. India has no DST, so the
+// fixed +05:30 offset is always exact.
+
+export function istDateInputValue(date: Date | string | null | undefined): string {
+  if (!date) return "";
+  const { day, month, year } = istParts(date);
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
+export function istTimeInputValue(date: Date | string | null | undefined): string {
+  if (!date) return "";
+  const { hour, minute } = istParts(date);
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
+export function istDateTimeInputValue(date: Date | string | null | undefined): string {
+  if (!date) return "";
+  return `${istDateInputValue(date)}T${istTimeInputValue(date)}`;
+}
+
+/**
+ * Parse form-input values as IST wall-clock time. Accepts a date ("YYYY-MM-DD",
+ * optionally with a separate "HH:mm" time) or a combined datetime-local value
+ * ("YYYY-MM-DDTHH:mm" or with seconds). Returns null when empty or invalid.
+ */
+export function dateFromISTInput(dateStr: string, timeStr?: string): Date | null {
+  if (!dateStr) return null;
+  const iso = dateStr.includes("T") ? dateStr : `${dateStr}T${timeStr || "00:00"}`;
+  const withSeconds = /T\d{2}:\d{2}$/.test(iso) ? `${iso}:00` : iso;
+  const parsed = new Date(`${withSeconds}+05:30`);
+  return isNaN(parsed.getTime()) ? null : parsed;
+}
+
 export function timeAgoHindi(date: Date | string | null | undefined): string {
   if (!date) return "";
   const diff = Date.now() - new Date(date).getTime();

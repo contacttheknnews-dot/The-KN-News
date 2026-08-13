@@ -9,7 +9,7 @@ import { inputCls, labelCls, btnPrimary, btnSecondary } from "../ui";
 import ImageUploadField from "../ImageUploadField";
 import RichTextEditor from "@/components/editor/RichTextEditor";
 import SeoPanel, { CharCounter } from "./SeoPanel";
-import { slugify, formatHindiDateTime } from "@/lib/utils";
+import { slugify, formatHindiDateTime, formatHindiTime } from "@/lib/utils";
 
 type Option = { id: number; name: string; parentId?: number | null };
 
@@ -453,7 +453,7 @@ export default function ArticleForm({
           )}
           {lastAutosave && (
             <p className="text-[11px] text-green-700">
-              ☁ Draft autosaved — {lastAutosave.toLocaleTimeString()}
+              ☁ Draft autosaved — {formatHindiTime(lastAutosave)}
             </p>
           )}
 

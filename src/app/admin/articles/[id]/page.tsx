@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
+import { istDateInputValue, istTimeInputValue } from "@/lib/utils";
 import ArticleForm from "../ArticleForm";
 import RevisionHistory, { type RevisionItem } from "../RevisionHistory";
 
@@ -64,8 +65,8 @@ export default async function EditArticlePage({
           authorId: article.authorId,
           location: article.location ?? "",
           status: article.status,
-          publishDate: publishedAt.toISOString().slice(0, 10),
-          publishTime: publishedAt.toTimeString().slice(0, 5),
+          publishDate: istDateInputValue(publishedAt),
+          publishTime: istTimeInputValue(publishedAt),
           featured: article.featured,
           isOpinion: article.isOpinion,
           tags: article.tags.map((t) => t.tag.name).join(", "),

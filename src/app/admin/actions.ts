@@ -16,7 +16,7 @@ import {
   logActivity,
 } from "@/lib/auth";
 import { rateLimit } from "@/lib/rate-limit";
-import { slugify } from "@/lib/utils";
+import { slugify, dateFromISTInput } from "@/lib/utils";
 import { sanitizeArticleHtml } from "@/lib/sanitize";
 import type { Role } from "@/lib/constants";
 
@@ -85,8 +85,8 @@ export async function saveArticle(
   const publishTime = String(formData.get("publishTime") || "00:00");
   let publishedAt: Date | null = null;
   if (publishDate) {
-    const parsed = new Date(`${publishDate}T${publishTime}`);
-    if (isNaN(parsed.getTime())) {
+    const parsed = dateFromISTInput(publishDate, publishTime);
+    if (!parsed) {
       return { ok: false, message: "प्रकाशन तिथि/समय अमान्य है।" };
     }
     publishedAt = parsed;
@@ -360,8 +360,8 @@ export async function saveBreaking(
     link: String(formData.get("link") || "").trim() || null,
     active: formData.get("active") === "on",
     order: Number(formData.get("order")) || 0,
-    startAt: formData.get("startAt") ? new Date(String(formData.get("startAt"))) : null,
-    endAt: formData.get("endAt") ? new Date(String(formData.get("endAt"))) : null,
+    startAt: dateFromISTInput(String(formData.get("startAt") || "")),
+    endAt: dateFromISTInput(String(formData.get("endAt") || "")),
   };
   if (id) await prisma.breakingNews.update({ where: { id }, data });
   else await prisma.breakingNews.create({ data });
@@ -529,10 +529,8 @@ export async function saveAd(
     imageMobile: String(formData.get("imageMobile") || "").trim() || null,
     url,
     placement: String(formData.get("placement") || "SIDEBAR"),
-    startDate: formData.get("startDate")
-      ? new Date(String(formData.get("startDate")))
-      : null,
-    endDate: formData.get("endDate") ? new Date(String(formData.get("endDate"))) : null,
+    startDate: dateFromISTInput(String(formData.get("startDate") || "")),
+    endDate: dateFromISTInput(String(formData.get("endDate") || "")),
     active: formData.get("active") === "on",
   };
   if (id) await prisma.advertisement.update({ where: { id }, data });

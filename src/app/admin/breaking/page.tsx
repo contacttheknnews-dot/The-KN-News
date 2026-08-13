@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { formatHindiDateTime } from "@/lib/utils";
+import { formatHindiDateTime, istDateTimeInputValue } from "@/lib/utils";
 import { deleteBreaking, toggleBreaking } from "../actions";
 import { DeleteButton, ActionButton } from "../ui";
 import BreakingForm from "./BreakingForm";
@@ -62,8 +62,8 @@ export default async function BreakingPage({
                   link: editing.link ?? "",
                   active: editing.active,
                   order: editing.order,
-                  startAt: editing.startAt?.toISOString().slice(0, 16) ?? "",
-                  endAt: editing.endAt?.toISOString().slice(0, 16) ?? "",
+                  startAt: istDateTimeInputValue(editing.startAt),
+                  endAt: istDateTimeInputValue(editing.endAt),
                 }
               : null
           }
