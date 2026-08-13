@@ -6,7 +6,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("postgresql://USER:PASSWORD@HOST-pooler.REGION.aws.neon.tech/DBNAME?sslmode=require&pgbouncer=true&connection_limit=1")
+  url      = env("DATABASE_URL")
   // When you move the app to the POOLED Neon endpoint, uncomment the line below
   // and set DIRECT_DATABASE_URL (the non-pooled endpoint) so migrate/db push use
   // a direct connection. Leaving it commented keeps `prisma generate` working

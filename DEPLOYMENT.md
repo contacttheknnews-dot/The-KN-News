@@ -39,6 +39,8 @@ Then point `.env`'s `DATABASE_URL` at the Neon string and initialize the databas
 
 ```bash
 npm run db:push
+# The seed requires SEED_ADMIN_PASSWORD (min 12 chars, no default) and refuses
+# to run against a production-looking DATABASE_URL unless explicitly confirmed.
 npm run db:seed
 node scripts/production-content/setup-content.cjs
 ```

@@ -280,7 +280,7 @@ Notable real subjects: Taj Mahal, Varanasi ghats, Rumi Darwaza (Lucknow), Kumbh 
 
 # 7. ADMIN CMS
 
-Login: `/admin/login`. Seeded accounts (⚠️ all use password `admin123` — **must be changed before production**): admin@ (SUPER_ADMIN), editor@, reporter@, ads@, moderator@ `theknnews.com`.
+Login: `/admin/login`. Seeded accounts (password comes from the required `SEED_ADMIN_PASSWORD` env var — there is no default; **production credentials must be supplied through secure environment variables and never committed to Git**): admin@ (SUPER_ADMIN), editor@, reporter@, ads@, moderator@ `theknnews.com`.
 
 ## 7.1 Dashboard (`/admin`) — IMPLEMENTED
 
@@ -639,8 +639,8 @@ Cricket also appears as a homepage section and holds 8 of the 58 articles + real
 | Rate limiting | PARTIAL | In-memory sliding window on all public forms + admin login. Caveats: login bucket is **global** (10/min for everyone, not per-IP); in-memory store resets per instance (fine single-server, not serverless) |
 | Spam protection | IMPLEMENTED | Honeypot fields on all public forms |
 | File upload security | PARTIAL | Auth required, 5 MB cap, extension allow-list, server-generated filenames. Gaps: **no role check** (any logged-in role may upload), extension-only validation (no MIME sniffing), SVG uploads allowed (stored-XSS vector if untrusted users upload) |
-| Secrets handling | IMPLEMENTED | All secrets in `.env` (gitignored); no secrets in code. ⚠️ `AUTH_SECRET` has a hardcoded dev fallback — **must be set in production** |
-| Password policy | PARTIAL | Min 8 chars for new users; seeded accounts share `admin123` — **change before launch** |
+| Secrets handling | IMPLEMENTED | All secrets in `.env` (gitignored); no secrets in code. `AUTH_SECRET` has no fallback — the app refuses to start without it in every environment |
+| Password policy | PARTIAL | Min 8 chars for new users; seed requires `SEED_ADMIN_PASSWORD` (min 12 chars, no default) — set unique per-account passwords before launch |
 | Input validation | IMPLEMENTED | Server-side validation + length caps on all public and admin form fields |
 | Login UX hardening | IMPLEMENTED | Uniform error message (no user enumeration); inactive accounts blocked |
 
@@ -844,8 +844,8 @@ Build check: `npm run build` then `npm run start`.
 
 ### 🔴 Critical (must fix before production)
 1. **SQLite + local uploads are not production-viable on serverless hosts** — migrate DB to PostgreSQL/MySQL and uploads to object storage (§23).
-2. **Seeded passwords** — every account uses `admin123`, and the login page displays demo credentials. Change passwords + remove the hint.
-3. **`AUTH_SECRET` dev fallback** — a deployment that forgets this env var silently signs sessions with a publicly known string.
+2. **Seeded passwords** — ✅ FIXED: the seed now requires `SEED_ADMIN_PASSWORD` (no default), and the login page no longer displays demo credentials. Still set unique per-account passwords before launch.
+3. **`AUTH_SECRET` dev fallback** — ✅ FIXED: there is no fallback; the app throws at startup if `AUTH_SECRET` is unset, in every environment.
 
 ### 🟠 High priority
 4. Author photos (6) still sample SVGs — replace with real team photos.

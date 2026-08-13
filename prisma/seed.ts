@@ -68,9 +68,15 @@ async function main() {
   console.log("Seeding The KN News …");
 
   /* ---------- Users ---------- */
-  // Dev default; override with SEED_ADMIN_PASSWORD. Never ships to prod (guarded
-  // above), and existing users are never overwritten (upsert update:{}).
-  const password = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD || "admin123", 12);
+  // No default password — SEED_ADMIN_PASSWORD must be set explicitly, even in
+  // dev. Existing users are never overwritten (upsert update:{}).
+  const seedPassword = process.env.SEED_ADMIN_PASSWORD;
+  if (!seedPassword || seedPassword.length < 12) {
+    throw new Error(
+      "SEED_ADMIN_PASSWORD is required (min 12 characters). Set it in the environment before running the seed — there is no default password."
+    );
+  }
+  const password = await bcrypt.hash(seedPassword, 12);
   const usersData = [
     { email: "admin@theknnews.com", name: "Krishna Nand Yadav", role: "SUPER_ADMIN" },
     { email: "editor@theknnews.com", name: "Rahul Srivastav", role: "EDITOR" },

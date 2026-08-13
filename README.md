@@ -9,13 +9,14 @@ Built with Next.js 15 (App Router) + TypeScript + Tailwind CSS 4 + Prisma (SQLit
 npm install
 npm run db:push         # create the database
 npm run images:generate # regenerate sample SVG images (already committed)
+# Set SEED_ADMIN_PASSWORD (min 12 chars) in .env first — the seed has no default password.
 npm run db:seed         # load sample Hindi content
 
 npm run dev             # http://localhost:3000
 ```
 
-**Admin login:** http://localhost:3000/admin — `admin@theknnews.com` (change the seeded password before going live)
-(also seeded: editor@ / reporter@ / ads@ / moderator@ — same password. **Change all passwords before going live.**)
+**Admin login:** http://localhost:3000/admin — `admin@theknnews.com` with the `SEED_ADMIN_PASSWORD` you set
+(also seeded: editor@ / reporter@ / ads@ / moderator@ — same password. **Production credentials must be supplied through secure environment variables. Never commit credentials to Git. Set strong unique passwords per account before going live.**)
 
 ## What's inside
 

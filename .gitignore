@@ -36,9 +36,13 @@ yarn-error.log*
 # (it must contain NO real secrets).
 !.env.example
 
-# local sqlite database — contains user rows and password hashes
+# local databases — contain user rows and password hashes
 prisma/dev.db
 prisma/dev.db-journal
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
 
 # vercel
 .vercel
