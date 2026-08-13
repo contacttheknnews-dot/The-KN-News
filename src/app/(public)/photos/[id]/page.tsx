@@ -12,7 +12,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const gallery = await prisma.gallery.findUnique({ where: { id: Number(id) || 0 } });
-  if (!gallery) return { title: "गैलरी नहीं मिली" };
+  // Real 404 status: metadata resolves before the loading.tsx shell streams.
+  if (!gallery) notFound();
   return { title: `${gallery.title} — फोटो गैलरी`, description: gallery.description || undefined };
 }
 

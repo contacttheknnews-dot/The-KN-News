@@ -18,7 +18,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const category = await prisma.category.findUnique({ where: { slug } });
-  if (!category) return { title: "श्रेणी नहीं मिली" };
+  // Real 404 status: metadata resolves before the loading.tsx shell streams.
+  if (!category) notFound();
   return {
     title: `${category.name} की ताज़ा खबरें`,
     description:

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
@@ -24,7 +25,8 @@ export const dynamic = "force-dynamic";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-async function getArticle(slug: string) {
+// cache() dedupes the generateMetadata + page render queries into one.
+const getArticle = cache(async (slug: string) => {
   return prisma.article.findFirst({
     where: { slug, ...publishedWhere() },
     include: {
@@ -34,7 +36,7 @@ async function getArticle(slug: string) {
       tags: { include: { tag: true } },
     },
   });
-}
+});
 
 export async function generateMetadata({
   params,
@@ -43,7 +45,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const article = await getArticle(slug);
-  if (!article) return { title: "खबर नहीं मिली" };
+  // notFound() here (not just in the page) is what turns the response into a
+  // real 404: metadata resolves before streaming starts, while the page body
+  // runs after the loading.tsx shell has already been flushed with status 200.
+  if (!article) notFound();
   const title = article.seoTitle || article.title;
   const description = article.metaDescription || truncate(article.excerpt, 160);
   const url = article.canonicalUrl || `${siteUrl}/news/${article.slug}`;
